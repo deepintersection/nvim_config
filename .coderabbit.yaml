@@ -1,0 +1,89 @@
+# =============================================================================
+#  .coderabbit.yaml — CodeRabbit configuration
+#  https://docs.coderabbit.ai/guides/configure-coderabbit
+# =============================================================================
+
+version: "2"
+
+language: "en-US"
+
+# ---------------------------------------------------------------------------
+# Review settings
+# ---------------------------------------------------------------------------
+reviews:
+  # Trigger on every PR push (not just the first commit)
+  request_changes_workflow: false
+
+  # High-level summary at the top of each review
+  high_level_summary: true
+
+  # Poem at the end of the summary — fun for a personal config repo
+  poem: false
+
+  # Walk through every changed file
+  review_status: true
+
+  # Collapse already-resolved discussions
+  collapse_walkthrough: false
+
+  auto_review:
+    enabled: true
+    # Also review draft PRs
+    drafts: true
+    # Review when base branch is any of these
+    base_branches:
+      - "main"
+      - "develop"
+
+  # Paths to always review (even if small)
+  path_filters:
+    - "!**/.git/**"
+    - "!**/lazy-lock.json"   # lock file — noisy, skip line-by-line review
+    - "!docs/**"
+
+  # Per-path instructions for the AI reviewer
+  path_instructions:
+    - path: "lua/**/*.lua"
+      instructions: |
+        This is a Neovim configuration written in Lua.
+        - Check for keymap conflicts with the namespace table in keymaps.lua.
+        - Verify that lazy.nvim plugin specs include a `desc` in keymaps.
+        - Flag any `vim.api` calls that could be replaced by newer `vim.*` APIs (Neovim 0.10+).
+        - Warn if `require()` at the top-level of a plugin spec (should be inside callbacks).
+        - Ensure `opts` tables are used instead of `config = function() … setup({}) end` where possible.
+        - Check for hardcoded paths — they must come from `vim.fn.stdpath()` or env vars.
+
+    - path: "scripts/**"
+      instructions: |
+        These are shell/batch launch scripts.
+        - Bash scripts: check for `set -euo pipefail`, proper quoting, and ShellCheck-style issues.
+        - Verify that all NVIM_* environment variables are documented in env_example.sh.
+        - Batch scripts: verify SETLOCAL usage and error handling.
+
+    - path: ".coderabbit.yaml"
+      instructions: |
+        Verify the YAML is valid and all referenced paths exist in the repo.
+
+  # Summary of what this repo is about (gives context to the AI)
+  finishing_touches:
+    docstrings:
+      enabled: false   # Lua config files don't need docstring generation
+
+# ---------------------------------------------------------------------------
+# Chat settings
+# ---------------------------------------------------------------------------
+chat:
+  auto_reply: true
+
+# ---------------------------------------------------------------------------
+# Knowledge base
+# ---------------------------------------------------------------------------
+knowledge_base:
+  learnings:
+    scope: auto
+  issues:
+    scope: auto
+  jira:
+    usage: disabled
+  linear:
+    usage: disabled
