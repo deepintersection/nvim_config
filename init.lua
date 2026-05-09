@@ -13,8 +13,18 @@ end
 
 -- Core (no plugins, no side-effects beyond vim.opt / vim.keymap)
 require("config.options")
---require("config.keymaps")
---require("config.autocmds")
+
+-- Feature flags for optional components (set to false to disable)
+local enable_keymaps = true
+local enable_autocmds = true
+
+if enable_keymaps then
+  require("config.keymaps")
+end
+
+if enable_autocmds then
+  require("config.autocmds")
+end
 
 -- Plugin manager bootstrap — loads plugins only when the file exists
 require("config.lazy")
