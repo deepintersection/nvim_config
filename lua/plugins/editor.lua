@@ -46,7 +46,7 @@ return {
       -- explicit here avoids silent no-ops on misconfigured machines.
       -- -----------------------------------------------------------------------
 
-      -- Python: prefer ruff (format + imports in one tool) over black + isort
+      -- Python: prefer rff (format + imports in one tool) over black + isort
       local python_fmts = {}
       if util.env("NVIM_RUFF_PATH") then
         python_fmts = { "ruff_format", "ruff_organize_imports" }

@@ -66,8 +66,7 @@ return {
 
     ---@module "blink.cmp"
     ---@type blink.cmp.Config
-    opts = {
-
+  opts = {
       -- Disable completion in diff buffers, fugitive, and special buffers
       enabled = function()
         local ft = vim.bo.filetype
@@ -84,7 +83,7 @@ return {
         if vim.wo.diff then return false end
         return true
       end,
-
+ 
       -- -----------------------------------------------------------------------
       -- Keymap
       -- -----------------------------------------------------------------------
@@ -93,25 +92,25 @@ return {
       -- -----------------------------------------------------------------------
       keymap = {
         preset = "none",
-
+ 
         ["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },
         ["<C-e>"]     = { "hide", "fallback" },
-
+ 
         ["<Tab>"]   = { "select_next", "snippet_forward",   "fallback" },
         ["<S-Tab>"] = { "select_prev", "snippet_backward",  "fallback" },
         ["<C-n>"]   = { "select_next", "fallback" },
         ["<C-p>"]   = { "select_prev", "fallback" },
-
+ 
         ["<CR>"]    = { "accept",           "fallback" },
         ["<C-y>"]   = { "select_and_accept" },
-
+ 
         ["<C-b>"]   = { "scroll_documentation_up",   "fallback" },
         ["<C-f>"]   = { "scroll_documentation_down", "fallback" },
-
+ 
         -- NOTE: cmdline keymap goes in the cmdline{} block below, NOT here.
         -- In v2 the keymap validator rejects keymap.cmdline as an unknown key.
       },
-
+ 
       -- -----------------------------------------------------------------------
       -- Completion behaviour
       -- -----------------------------------------------------------------------
@@ -134,11 +133,11 @@ return {
             },
           },
         },
-
+ 
         keyword = {
           range = "prefix",   -- "prefix" | "full" — match text before cursor
         },
-
+ 
         trigger = {
           prefetch_on_insert  = not util.is_ssh,
           show_in_snippet     = true,
@@ -149,7 +148,7 @@ return {
           show_on_insert_on_trigger_character = true,
           show_on_x_blocked_trigger_characters = { "'", '"', "(" },
         },
-
+ 
         list = {
           max_items = 200,
           selection = {
@@ -164,7 +163,7 @@ return {
             from_top     = true,
           },
         },
-
+ 
         -- Completion menu
         menu = {
           enabled     = true,
@@ -173,13 +172,13 @@ return {
           border      = "rounded",
           winblend    = 0,
           scrollbar   = true,
-
+ 
           draw = {
             padding    = 1,
             gap        = 1,
             -- Treesitter highlighting for LSP completion items
             treesitter = { "lsp" },
-
+ 
             -- Use blink.cmp v2 built-in column components.
             -- Do NOT override components{} — v2 internal render APIs changed
             -- between v1 and v2 (label_matched_indices is now a flat int list,
@@ -191,7 +190,7 @@ return {
             },
           },
         },
-
+ 
         -- Documentation popup
         documentation = {
           auto_show          = true,
@@ -207,14 +206,14 @@ return {
             scrollbar   = true,
           },
         },
-
+ 
         -- Ghost text: disabled by default (SSH performance)
         -- Enable with NVIM_GHOST_TEXT=1
         ghost_text = {
           enabled = util.env_bool("NVIM_GHOST_TEXT", false),
         },
       },
-
+ 
       -- -----------------------------------------------------------------------
       -- Signature help
       -- -----------------------------------------------------------------------
@@ -234,7 +233,7 @@ return {
           treesitter_highlighting = true,
         },
       },
-
+ 
       -- -----------------------------------------------------------------------
       -- Snippets — vim.snippet built-in (0.12)
       -- -----------------------------------------------------------------------
@@ -246,13 +245,13 @@ return {
       -- Sources
       -- -----------------------------------------------------------------------
       sources = {
-        default      = { "lsp", "path", "snippets", "buffer" },
+        default      = {"lazydev", "lsp", "path", "snippets", "buffer" },
         per_filetype = {
           lua      = { "lazydev", "lsp", "path", "snippets", "buffer" },
           sql      = { "lsp", "buffer" },
           markdown = { "buffer", "path", "snippets" },
         },
-
+ 
         providers = {
           lsp = {
             name   = "LSP",
@@ -265,7 +264,7 @@ return {
               end, items)
             end,
           },
-
+ 
           path = {
             name   = "Path",
             module = "blink.cmp.sources.path",
@@ -275,7 +274,7 @@ return {
               show_hidden_files_by_default = false,
             },
           },
-
+ 
           buffer = {
             name   = "Buffer",
             module = "blink.cmp.sources.buffer",
@@ -290,18 +289,6 @@ return {
               use_cache = true,
             },
           },
-
-          snippets = {
-            name   = "Snippets",
-            module = "blink.cmp.sources.snippets",
-            opts   = {
-              friendly_snippets = false,
-              search_paths = { vim.fn.stdpath("config") .. "/snippets" },
-              global_snippets = { "all" },
-              ignored_filetypes = {},
-            },
-          },
-
           -- lazydev: Neovim API completions for Lua files (from plugins/lsp.lua)
           lazydev = {
             name         = "LazyDev",
@@ -309,7 +296,7 @@ return {
             score_offset = 100,  -- always beat LSP for Lua Neovim API items
           },
         },
-
+ 
         -- Per-filetype minimum keyword length
         min_keyword_length = function()
           -- In large files over SSH, require at least 2 chars to trigger
@@ -317,6 +304,7 @@ return {
           return 1
         end,
       },
+
 
       -- -----------------------------------------------------------------------
       -- Fuzzy matching — v2 API
@@ -328,30 +316,9 @@ return {
       fuzzy = {
         -- "prefer_rust": use compiled Rust binary (no warning since we built it)
         -- "lua": fallback if Rust binary fails to load
-        implementation      = "prefer_rust",
-        use_typo_resistance = true,
-
-        -- Frecency: boosts items you accept frequently
-        -- V2 API: frecency table (not flat use_frecency boolean)
-        frecency = {
-          enabled = true,
-          path    = vim.fn.stdpath("state") .. "/blink/cmp/frecency.dat",
-          -- Gentoo / normal Linux: keep locking enabled (safe)
-          unsafe_no_lock = false,
-        },
-
-        -- Proximity: boost items that appear near the cursor in the buffer
-        use_proximity = true,
-
-        -- Sort: score first, then LSP sort_text
-        sorts = { "score", "sort_text" },
-
-        -- Max typos allowed relative to keyword length
-        max_typos = function(keyword)
-          return math.floor(#keyword / 4)
-        end,
+        implementation      = "rust",
       },
-
+ 
       -- -----------------------------------------------------------------------
       -- Appearance
       -- -----------------------------------------------------------------------
@@ -359,27 +326,15 @@ return {
         use_nvim_cmp_as_default = false,
         nerd_font_variant       = "mono",
       },
-
+ 
       -- -----------------------------------------------------------------------
       -- Cmdline completion
       -- -----------------------------------------------------------------------
       cmdline = {
         enabled = true,
-        keymap  = { preset = "cmdline" },
-        sources = function()
-          local type = vim.fn.getcmdtype()
-          -- : commands and = expressions
-          if type == ":" or type == "@" then
-            return { "cmdline" }
-          end
-          -- / and ? search
-          return { "buffer" }
-        end,
-        completion = {
-          menu = { auto_show = true },
-        },
       },
-    },
+
+  },
 
     -- =========================================================================
     -- config: runs after opts is applied
@@ -390,6 +345,7 @@ return {
 
       -- Disable 0.12 built-in autocomplete — we use blink.cmp
       vim.opt.autocomplete = false
+      
 
       -- Merge blink.cmp v2 LSP capabilities with our global config.
       -- Note: On Neovim 0.11+, this can be skipped when using vim.lsp.config,

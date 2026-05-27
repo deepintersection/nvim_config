@@ -3,7 +3,6 @@
 vim.g.mapleader      = " "
 vim.g.maplocalleader = "\\"
 require('vim._core.ui2').enable({})
-
 require("core.options")
 require("core.autocmds")
 require("core.treesitter")

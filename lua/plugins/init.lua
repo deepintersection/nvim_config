@@ -33,12 +33,12 @@ require("lazy").setup({
   { import = "plugins.editor" },
   { import = "plugins.ui" },
   { import = "plugins.completion" },
---  { import = "plugins.dap" },
+  { import = "plugins.dap" },
   { import = "plugins.git" },
 --  { import = "plugins.tools" },
 --  -- Language-specific:
---  { import = "plugins.lang.python" },
---  { import = "plugins.lang.rust" },
+  { import = "plugins.lang.python" },
+  { import = "plugins.lang.rust" },
 --  { import = "plugins.lang.lua_lang" },
 --  { import = "plugins.lang.embedded" },
 }, {

@@ -138,7 +138,7 @@ vim.schedule(function()
       -- Codelens refresh
       if client:supports_method("textDocument/codeLens") then
         map("n", "<leader>cl", function()
-          vim.lsp.codelens.refresh({ bufnr = buf })
+          vim.lsp.codelens.enable(true, { bufnr = buf })
         end, "LSP: refresh codelens")
 
         vim.api.nvim_create_autocmd(
@@ -149,7 +149,7 @@ vim.schedule(function()
               "config_lsp_codelens_" .. buf, { clear = true }
             ),
             callback = function()
-              vim.lsp.codelens.refresh({ bufnr = buf })
+              vim.lsp.codelens.enable(true,{ bufnr = buf })
             end,
           }
         )
